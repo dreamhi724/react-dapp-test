@@ -244,7 +244,7 @@ function App() {
         const nftContract = new ethers.Contract(contractAddress, abi, signer);
 
         console.log("Initialize payment");
-        let nftTxn = await nftContract.cancelOrder(inputValues['ids3'].split(','));
+        let nftTxn = await nftContract.bulkCancel(inputValues['ids3'].split(','));
         console.log("Mining... please wait");
         await nftTxn.wait();
 
