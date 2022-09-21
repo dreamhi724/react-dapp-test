@@ -43,20 +43,20 @@ function App() {
                                 chainName: "DogeChain",
                                 nativeCurrency: {
                                     name: "Wrapped DOGE",
-                                    symbol: "wDOGE",
-                                    decimals: 9,
+                                    symbol: "WDOGE",
+                                    decimals: 18,
                                 }
                             },
                         ],
                     });
                 } catch (addError) {
                     console.error(addError)
-                    alert("Operation failed. Choose the Binance Smart Chain on your wallet")
+                    alert("Operation failed. Choose the Doge Chain on your wallet")
                     return
                 }
             } else {
                 console.error(error)
-                alert("Operation failed. Choose the Binance Smart Chain on your wallet")
+                alert("Operation failed. Choose the Doge Chain on your wallet")
                 return
             }
             
