@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import './App.css';
 import contract from './contracts/contract.json';
 
-const contractAddress = "0x98f9A0DB09B575384BDEeC3c39cFe97516ccBf36";
+const contractAddress = "0x3E79C89f479824Bc24b9eAD73EB8c55F322FE963";
 const abi = contract.abi;
 
 function App() {
@@ -22,12 +22,12 @@ function App() {
     const provider = new ethers.providers.Web3Provider(ethereum);
     const { chainId } = await provider.getNetwork();
     
-    if(chainId !== 1923){
+    if(chainId !== 2000){
         try {
             // check if the chain to connect to is installed
             await ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x783' }], // chainId must be in hexadecimal numbers
+                params: [{ chainId: '0x7D0' }], // chainId must be in hexadecimal numbers
             });
         } catch (error) {
             // This error code indicates that the chain has not been added to MetaMask
@@ -38,12 +38,12 @@ function App() {
                         method: 'wallet_addEthereumChain',
                         params: [
                             {
-                                chainId: '0x783',
-                                rpcUrls: ['https://rpc.shibchain.app/'],
-                                chainName: "SHIB CHAIN",
+                                chainId: '0x7D0',
+                                rpcUrls: ['https://rpc01-sg.dogechain.dog/'],
+                                chainName: "DogeChain",
                                 nativeCurrency: {
-                                    name: "Wrapped Shib",
-                                    symbol: "WSHIB",
+                                    name: "Wrapped DOGE",
+                                    symbol: "wDOGE",
                                     decimals: 9,
                                 }
                             },
