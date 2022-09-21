@@ -3,16 +3,12 @@ import { ethers } from 'ethers';
 import './App.css';
 import contract from './contracts/contract.json';
 
-const contractAddress = "0xC6FB0EB12beB01CcbcF61299199856d70e86Bd81";
-const usdcAddress = "0x07865c6E87B9F70255377e024ace6630C1Eaa37F";
+const contractAddress = "0x98f9A0DB09B575384BDEeC3c39cFe97516ccBf36";
 const abi = contract.abi;
-const erc20abi = contract.erc20abi;
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState(null);
-  const [donee, setDonee] = useState('');
-  const [tax, setTax] = useState('');
-  const [amount, setAmount] = useState('');
+  const [inputValues, setInputValues] = useState({});
 
   const checkWalletIsConnected = async () => {
     const { ethereum } = window;
@@ -22,6 +18,49 @@ function App() {
       return;
     } else {
       console.log("Wallet exists! We're ready to go!");
+    }
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const { chainId } = await provider.getNetwork();
+    
+    if(chainId !== 1923){
+        try {
+            // check if the chain to connect to is installed
+            await ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: '0x783' }], // chainId must be in hexadecimal numbers
+            });
+        } catch (error) {
+            // This error code indicates that the chain has not been added to MetaMask
+            // if it is not, then install it into the user MetaMask
+            if (error.code === 4902) {
+                try {
+                    await ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [
+                            {
+                                chainId: '0x783',
+                                rpcUrls: ['https://rpc.shibchain.app/'],
+                                chainName: "SHIB CHAIN",
+                                nativeCurrency: {
+                                    name: "Wrapped Shib",
+                                    symbol: "WSHIB",
+                                    decimals: 9,
+                                }
+                            },
+                        ],
+                    });
+                } catch (addError) {
+                    console.error(addError)
+                    alert("Operation failed. Choose the Binance Smart Chain on your wallet")
+                    return
+                }
+            } else {
+                console.error(error)
+                alert("Operation failed. Choose the Binance Smart Chain on your wallet")
+                return
+            }
+            
+        }
     }
 
     const accounts = await ethereum.request({ method: 'eth_accounts' });
@@ -51,6 +90,173 @@ function App() {
     }
   }
 
+  const bulkList = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const nftContract = new ethers.Contract(contractAddress, abi, signer);
+
+        console.log("Initialize payment");
+        let nftTxn = await nftContract.bulkList(inputValues['tokenaddress'], inputValues['ids1'].split(','), inputValues['startprice'], inputValues['endprice'], inputValues['endblock'], inputValues['type']);
+        console.log("Mining... please wait");
+        await nftTxn.wait();
+
+        console.log(`Mined, transaction hash: ${nftTxn.hash}`);
+      } else {
+        console.log("Ethereum object does not exit");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const bid = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const nftContract = new ethers.Contract(contractAddress, abi, signer);
+
+        console.log("Initialize payment");
+        let nftTxn = await nftContract.bid(inputValues['order1'], {
+          gasLimit: 300000,
+          value: inputValues['price1'],
+        });
+        console.log("Mining... please wait");
+        await nftTxn.wait();
+
+        console.log(`Mined, transaction hash: ${nftTxn.hash}`);
+      } else {
+        console.log("Ethereum object does not exit");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const buyItNow = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const nftContract = new ethers.Contract(contractAddress, abi, signer);
+
+        console.log("Initialize payment");
+        let nftTxn = await nftContract.buyItNow(inputValues['order2'], {
+          gasLimit: 300000,
+          value: inputValues['price2'],
+        });
+        console.log("Mining... please wait");
+        await nftTxn.wait();
+
+        console.log(`Mined, transaction hash: ${nftTxn.hash}`);
+      } else {
+        console.log("Ethereum object does not exit");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const claim = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const nftContract = new ethers.Contract(contractAddress, abi, signer);
+
+        console.log("Initialize payment");
+        let nftTxn = await nftContract.claim(inputValues['order3']);
+        console.log("Mining... please wait");
+        await nftTxn.wait();
+
+        console.log(`Mined, transaction hash: ${nftTxn.hash}`);
+      } else {
+        console.log("Ethereum object does not exit");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const bulkClaim = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const nftContract = new ethers.Contract(contractAddress, abi, signer);
+
+        console.log("Initialize payment");
+        let nftTxn = await nftContract.bulkClaim(inputValues['ids2'].split(','));
+        console.log("Mining... please wait");
+        await nftTxn.wait();
+
+        console.log(`Mined, transaction hash: ${nftTxn.hash}`);
+      } else {
+        console.log("Ethereum object does not exit");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const cancelOrder = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const nftContract = new ethers.Contract(contractAddress, abi, signer);
+
+        console.log("Initialize payment");
+        let nftTxn = await nftContract.cancelOrder(inputValues['order4']);
+        console.log("Mining... please wait");
+        await nftTxn.wait();
+
+        console.log(`Mined, transaction hash: ${nftTxn.hash}`);
+      } else {
+        console.log("Ethereum object does not exit");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const bulkCancel = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const nftContract = new ethers.Contract(contractAddress, abi, signer);
+
+        console.log("Initialize payment");
+        let nftTxn = await nftContract.cancelOrder(inputValues['ids3'].split(','));
+        console.log("Mining... please wait");
+        await nftTxn.wait();
+
+        console.log(`Mined, transaction hash: ${nftTxn.hash}`);
+      } else {
+        console.log("Ethereum object does not exit");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   const mintNftHandler = async () => {
     try {
       const { ethereum } = window;
@@ -59,14 +265,9 @@ function App() {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const nftContract = new ethers.Contract(contractAddress, abi, signer);
-        const usdcContract = new ethers.Contract(usdcAddress, erc20abi, signer);
 
         console.log("Initialize payment");
-        await usdcContract.approve(contractAddress, 20*1000000)
         let nftTxn = await nftContract.purchaseTicket(20*1000000);
-        // let nftTxn = await nftContract.hiddenURI();
-        // console.log(nftTxn);
-
         console.log("Mining... please wait");
         await nftTxn.wait();
 
@@ -87,11 +288,64 @@ function App() {
     )
   }
 
-  const mintNftButton = () => {
+  const changeInput = (e) => {
+    // e.target
+    setInputValues({...inputValues, [e.target.name]: e.target.value});
+  }
+
+  const afterConnection = () => {
     return (
-      <button onClick={mintNftHandler} className='btn btn-mint-nft'>
-        Buy Ticket!
-      </button>
+      <>
+        <div>
+          <input type="text" placeholder='token address' name="tokenaddress" onChange={changeInput} value={inputValues['tokenaddress']?inputValues['tokenaddress']:''}></input>&nbsp;
+          <input type="text" placeholder='ids' name="ids1" onChange={changeInput} value={inputValues['ids1']?inputValues['ids1']:''}></input>&nbsp;
+          <input type="number" placeholder='start price' name="startprice" onChange={changeInput} value={inputValues['startprice']?inputValues['startprice']:''}></input>&nbsp;
+          <input type="number" placeholder='end price' name="endprice" onChange={changeInput} value={inputValues['endprice']?inputValues['endprice']:''}></input>&nbsp;
+          <input type="number" placeholder='end block' name="endblock" onChange={changeInput} value={inputValues['endblock']?inputValues['endblock']:''}></input>&nbsp;
+          <input type="number" placeholder='type' name="type" onChange={changeInput} value={inputValues['type']?inputValues['type']:''}></input>&nbsp;
+          <button onClick={bulkList} className='btn btn-mint-nft'>
+            Bulk List
+          </button>
+        </div>
+        <div style={{marginTop: 10}}>
+          <input type="text" placeholder='order 0x...' name="order1" onChange={changeInput} value={inputValues['order1']?inputValues['order1']:''}></input>&nbsp;
+          <input type="number" placeholder='price ' name="price1" onChange={changeInput} value={inputValues['price1']?inputValues['price1']:''}></input>&nbsp;
+          <button onClick={bid} className='btn btn-mint-nft'>
+            Bid
+          </button>
+        </div>
+        <div style={{marginTop: 10}}>
+          <input type="text" placeholder='order 0x...' name="order2" onChange={changeInput} value={inputValues['order2']?inputValues['order2']:''}></input>&nbsp;
+          <input type="number" placeholder='price' name="price2" onChange={changeInput} value={inputValues['price2']?inputValues['price2']:''}></input>&nbsp;
+          <button onClick={buyItNow} className='btn btn-mint-nft'>
+            Buy It Now
+          </button>
+        </div>
+        <div style={{marginTop: 10}}>
+          <input type="text" placeholder='order 0x...' name="order3" onChange={changeInput} value={inputValues['order3']?inputValues['order3']:''}></input>&nbsp;
+          <button onClick={claim} className='btn btn-mint-nft'>
+            Claim
+          </button>
+        </div>
+        <div style={{marginTop: 10}}>
+          <input type="text" placeholder='ids' name="ids2" onChange={changeInput} value={inputValues['ids2']?inputValues['ids2']:''}></input>&nbsp;
+          <button onClick={bulkClaim} className='btn btn-mint-nft'>
+            Bulk Claim
+          </button>
+        </div>
+        <div style={{marginTop: 10}}>
+          <input type="text" placeholder='order 0x...' name="order4" onChange={changeInput} value={inputValues['order4']?inputValues['order4']:''}></input>&nbsp;
+          <button onClick={cancelOrder} className='btn btn-mint-nft'>
+            Cancel Order
+          </button>
+        </div>
+        <div style={{marginTop: 10}}>
+          <input type="text" placeholder='ids' name="ids3" onChange={changeInput} value={inputValues['ids3']?inputValues['ids3']:''}></input>&nbsp;
+          <button onClick={bulkCancel} className='btn btn-mint-nft'>
+            Bulk Cancel
+          </button>
+        </div>
+      </>
     )
   }
 
@@ -105,7 +359,7 @@ function App() {
         Wallet Address: {currentAccount ? currentAccount : "No Wallet Connected"}
       </div>
       <div className="div-wallet-button">
-        {currentAccount ? mintNftButton() : connectWalletButton()}
+        {currentAccount ? afterConnection() : connectWalletButton()}
       </div>
       {/* Donee Address: <input type="text" id="donee"  onChange={e => setDonee(e.target.value)} />
       Tax percent: <input type="text" id="tax" onChange={e => setTax(e.target.value)}  />
