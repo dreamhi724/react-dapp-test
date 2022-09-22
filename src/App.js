@@ -102,8 +102,14 @@ function App() {
         const colContract = new ethers.Contract(inputValues['tokenaddress'], nftabi, signer);
 
         console.log("Initialize payment");
-        let appTxn = await colContract.setApprovalForAll(contractAddress, true);
-        await appTxn.wait();
+        if(inputValues['ids1'].split(',').length === 1){
+          let appTxn = await colContract.approve(contractAddress, inputValues['ids1'].split(',')[0]);
+          await appTxn.wait();
+        } else {
+          let appTxn = await colContract.setApprovalForAll(contractAddress, true);
+          await appTxn.wait();
+        }
+        
         let nftTxn = await nftContract.bulkList(inputValues['tokenaddress'], inputValues['ids1'].split(','), inputValues['startprice'], inputValues['endprice'], inputValues['endblock'], inputValues['type']);
         console.log("Mining... please wait");
         await nftTxn.wait();
