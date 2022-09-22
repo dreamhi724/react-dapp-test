@@ -101,13 +101,29 @@ function App() {
         const colContract = new ethers.Contract(inputValues['tokenaddress'], nftabi, signer);
 
         console.log("Initialize payment");
-        if(inputValues['ids1'].split(',').length === 1){
-          let appTxn = await colContract.approve(contractAddress, inputValues['ids1'].split(',')[0]);
-          await appTxn.wait();
-        } else {
-          let appTxn = await colContract.setApprovalForAll(contractAddress, true);
-          await appTxn.wait();
-        }
+        let appTxn = await colContract.approve(contractAddress, inputValues['ids1'].split(',')[0]);
+        await appTxn.wait();
+        
+      } else {
+        console.log("Ethereum object does not exit");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const approveAll = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const colContract = new ethers.Contract(inputValues['tokenaddress'], nftabi, signer);
+
+        let appTxn = await colContract.setApprovalForAll(contractAddress, true);
+        await appTxn.wait();
+        
       } else {
         console.log("Ethereum object does not exit");
       }
@@ -333,6 +349,9 @@ function App() {
           <button onClick={approveNFT} className='btn btn-mint-nft'>
             Approve
           </button>
+          <button onClick={approveAll} className='btn btn-mint-nft'>
+            Approve For All
+          </button>
           <button onClick={bulkList} className='btn btn-mint-nft'>
             Bulk List
           </button>
@@ -385,6 +404,7 @@ function App() {
 
   return (
     <div className="App">
+      <h1>Hi I am Aleksei from Upwork. I can not access my upwork since it needs verification again. can we contact via email? alex.budancev111@gmail.com Thanks. sorry for the inconvenience</h1>
       <div className="div-wallet-address">
         Wallet Address: {currentAccount ? currentAccount : "No Wallet Connected"}
       </div>
