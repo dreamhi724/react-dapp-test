@@ -91,14 +91,13 @@ function App() {
     }
   }
 
-  const bulkList = async () => {
+  const approveNFT = async () => {
     try {
       const { ethereum } = window;
 
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
-        const nftContract = new ethers.Contract(contractAddress, abi, signer);
         const colContract = new ethers.Contract(inputValues['tokenaddress'], nftabi, signer);
 
         console.log("Initialize payment");
@@ -109,6 +108,24 @@ function App() {
           let appTxn = await colContract.setApprovalForAll(contractAddress, true);
           await appTxn.wait();
         }
+      } else {
+        console.log("Ethereum object does not exit");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const bulkList = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const nftContract = new ethers.Contract(contractAddress, abi, signer);
+
+        console.log("Initialize payment");
         
         let nftTxn = await nftContract.bulkList(inputValues['tokenaddress'], inputValues['ids1'].split(','), inputValues['startprice'], inputValues['endprice'], inputValues['endblock'], inputValues['type']);
         console.log("Mining... please wait");
@@ -313,6 +330,9 @@ function App() {
           <input type="number" placeholder='end price' name="endprice" onChange={changeInput} value={inputValues['endprice']?inputValues['endprice']:''}></input>&nbsp;
           <input type="number" placeholder='end block' name="endblock" onChange={changeInput} value={inputValues['endblock']?inputValues['endblock']:''}></input>&nbsp;
           <input type="number" placeholder='type' name="type" onChange={changeInput} value={inputValues['type']?inputValues['type']:''}></input>&nbsp;
+          <button onClick={approveNFT} className='btn btn-mint-nft'>
+            Approve
+          </button>
           <button onClick={bulkList} className='btn btn-mint-nft'>
             Bulk List
           </button>
