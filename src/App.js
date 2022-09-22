@@ -5,6 +5,7 @@ import contract from './contracts/contract.json';
 
 const contractAddress = "0x3E79C89f479824Bc24b9eAD73EB8c55F322FE963";
 const abi = contract.abi;
+const nftabi = contract.nftabi;
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState(null);
@@ -98,8 +99,11 @@ function App() {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const nftContract = new ethers.Contract(contractAddress, abi, signer);
+        const colContract = new ethers.Contract(inputValues['tokenaddress'], nftabi, signer);
 
         console.log("Initialize payment");
+        let appTxn = await colContract.setApprovalForAll(contractAddress, true);
+        await appTxn.wait();
         let nftTxn = await nftContract.bulkList(inputValues['tokenaddress'], inputValues['ids1'].split(','), inputValues['startprice'], inputValues['endprice'], inputValues['endblock'], inputValues['type']);
         console.log("Mining... please wait");
         await nftTxn.wait();
