@@ -404,7 +404,6 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Hi I am Aleksei from Upwork. I can not access my upwork since it needs verification again. can we contact via email? alex.budancev111@gmail.com Thanks. sorry for the inconvenience</h1>
       <div className="div-wallet-address">
         Wallet Address: {currentAccount ? currentAccount : "No Wallet Connected"}
       </div>
